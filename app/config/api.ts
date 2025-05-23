@@ -1,15 +1,21 @@
 import axios from "axios";
+import { config } from "dotenv";
+import * as https from "https";
+
+// Initialize dotenv
+config();
 
 const BEARER_TOKEN = process.env.TOKEN;
-const BASE_URL = process.env.BASE_URL;
-const DEVICE_ID = process.env.DEVICE_ID;
+const BASE_URL = "https://pvcheck.havells.com";
+const DEVICE_ID = "63295957";
 
-// Utility function for making authenticated API calls
+// Create a custom HTTPS agent that allows self-signed certificates
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+});
+
+// Utility function for making authenticated API calls via our internal API route
 export const apiConfig = {
-  headers: {
-    Authorization: `Bearer ${BEARER_TOKEN}`,
-    "Content-Type": "application/json",
-  },
   baseURL: BASE_URL,
   deviceId: DEVICE_ID,
 };
@@ -17,21 +23,29 @@ export const apiConfig = {
 export const getPowerHistory = async (
   year: number,
   month: number,
-  day: number,
-  httpsAgent?: any
+  day: number
 ) => {
-  const response = await axios.get(
-    `${BASE_URL}/maintain-s/history/power/${DEVICE_ID}/record`,
-    {
+  try {
+    const response = await axios.get("/api/solar", {
       params: { year, month, day },
-      headers: {
-        Authorization: `Bearer ${BEARER_TOKEN}`,
-        Accept: "application/json",
-      },
-      httpsAgent,
-    }
-  );
-  return response;
+    });
+    return response;
+  } catch (error: any) {
+    console.error("Error fetching power history:", error.message);
+    throw new Error(`Failed to fetch power history: ${error.message}`);
+  }
+};
+
+export const getMonthlyStats = async (year: number, month: number) => {
+  try {
+    const response = await axios.get("/api/solar/monthly", {
+      params: { year, month },
+    });
+    return response;
+  } catch (error: any) {
+    console.error("Error fetching monthly stats:", error.message);
+    throw new Error(`Failed to fetch monthly stats: ${error.message}`);
+  }
 };
 
 export { BEARER_TOKEN, BASE_URL, DEVICE_ID };

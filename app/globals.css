@@ -2,7 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
 
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Chart Responsiveness */
+@media (max-width: 640px) {
+  .recharts-wrapper {
+    font-size: 10px;
+  }
+  
+  .recharts-cartesian-axis-tick-value {
+    font-size: 8px !important;
+  }
+  
+  .recharts-tooltip-wrapper {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .recharts-wrapper {
+    font-size: 12px;
+  }
+  
+  .recharts-cartesian-axis-tick-value {
+    font-size: 10px !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .recharts-wrapper {
+    font-size: 14px;
+  }
+  
+  .recharts-cartesian-axis-tick-value {
+    font-size: 12px !important;
+  }
+}
+
+/* Chart Container - No overflow hidden to prevent clipping */
+.chart-container {
+  width: 100%;
+  position: relative;
+}
+
+/* Ensure chart text is readable */
+.recharts-cartesian-axis-tick text {
+  fill: hsl(var(--muted-foreground));
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 50;
+}
+
+/* Handle chart responsiveness without clipping */
+.recharts-surface {
+  overflow: visible !important;
+}
 
 @layer base {
   :root {
@@ -108,8 +171,6 @@
     --chart-5: 340 75% 55%
   }
 }
-
-
 
 @layer base {
   * {
