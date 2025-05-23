@@ -21,7 +21,7 @@ export interface PowerStatistics {
   irradiateIntensity: number | null;
   chargeRatio: number | null;
   useDischargeRatio: number | null;
-  deviceData: any | null;
+  deviceData: Record<string, unknown> | null;
   acceptDay: string;
   cpr: number | null;
   theoreticalGeneration: number | null;
@@ -60,7 +60,7 @@ export interface PowerRecord {
   wirePower: number | null;
   batterySoc: number | null;
   batteryPower: number | null;
-  deviceData: any | null;
+  deviceData: Record<string, unknown> | null;
   generationRatio: number | null;
   generationCapacity: number;
   updateTime: number | null;
@@ -102,7 +102,7 @@ export interface MonthlyStatItem {
   irradiateIntensity: number | null;
   chargeRatio: number | null;
   useDischargeRatio: number | null;
-  deviceData: any | null;
+  deviceData: Record<string, unknown> | null;
   acceptDay: string;
   cpr: number | null;
   theoreticalGeneration: number | null;
@@ -145,7 +145,7 @@ export interface MonthlyStatistics {
   theoreticalGeneration: number | null;
   cpr: number | null;
   offsetDay: number | null;
-  deviceData: any | null;
+  deviceData: Record<string, unknown> | null;
   loss: number | null;
   lossRatio: number | null;
   absorbedUseValue: number | null;
@@ -176,4 +176,66 @@ export interface ChartDataPoint {
   hour: string;
   power: number;
   timestamp: number;
+}
+
+// API Response interfaces
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+// Processed monthly totals
+export interface MonthlyTotals {
+  totalGeneration: number;
+  avgDailyGeneration: number;
+  peakDayGeneration: number;
+  activeDays: number;
+}
+
+// Error response interface
+export interface ErrorResponse {
+  success: false;
+  error: string;
+  details?: string;
+}
+
+// Generic API response with error handling
+export type SolarApiResponse<T> = ApiResponse<T> | ErrorResponse;
+
+// Weekly data aggregation
+export interface WeeklyData {
+  week: string;
+  totalGeneration: number;
+  avgDailyGeneration: number;
+  days: DailyProduction[];
+}
+
+// System status interface
+export interface SystemStatus {
+  isActive: boolean;
+  currentPower: number;
+  peakPower: number;
+  lastUpdateTime: string;
+}
+
+// Filter and query interfaces
+export interface DateRange {
+  start: Date;
+  end: Date;
+}
+
+export interface SolarDataQuery {
+  year: number;
+  month: number;
+  day?: number;
+  dateRange?: DateRange;
+}
+
+// Utility type for API parameters
+export interface ApiRequestParams {
+  year: number;
+  month: number;
+  day?: number;
+  [key: string]: unknown;
 }

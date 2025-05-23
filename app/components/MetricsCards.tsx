@@ -96,12 +96,6 @@ export const MetricsCards = ({
     ? calculateMonthlyTotals(monthlyStats)
     : null;
 
-  // Estimate yearly production (monthly * 12)
-  const yearlyGeneration = monthlyGeneration * 12;
-
-  // Use a conservative estimate for total production (assume 2 years of operation)
-  const totalProduction = yearlyGeneration * 2;
-
   // Installed capacity assumption - 5.4 kW is a common residential solar system size
   const installedCapacity = 5.4; // kW
 

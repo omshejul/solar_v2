@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getPowerHistory, getMonthlyStats } from "@/app/config/api";
 import {
   PowerHistoryResponse,
   DailyProduction,
-  MonthlyStatsResponse,
   MonthlyStatistics,
+  MonthlyStatItem,
 } from "@/app/types/solar";
 
 interface UseSolarDataReturn {
@@ -67,13 +67,15 @@ export const useSolarData = (): UseSolarDataReturn => {
         monthlyStatsResponse.records &&
         Array.isArray(monthlyStatsResponse.records)
       ) {
-        allDailyData = monthlyStatsResponse.records.map((item: any) => ({
-          date: `${item.year}-${String(item.month).padStart(2, "0")}-${String(
-            item.day
-          ).padStart(2, "0")}`,
-          generation: item.generationValue || 0,
-          fullPowerHours: item.fullPowerHoursDay || 0,
-        }));
+        allDailyData = monthlyStatsResponse.records.map(
+          (item: MonthlyStatItem) => ({
+            date: `${item.year}-${String(item.month).padStart(2, "0")}-${String(
+              item.day
+            ).padStart(2, "0")}`,
+            generation: item.generationValue || 0,
+            fullPowerHours: item.fullPowerHoursDay || 0,
+          })
+        );
 
         // Sort by date
         allDailyData.sort(
@@ -93,7 +95,7 @@ export const useSolarData = (): UseSolarDataReturn => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -106,7 +108,7 @@ export const useSolarData = (): UseSolarDataReturn => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const refetch = () => {
     fetchData();
@@ -114,7 +116,6 @@ export const useSolarData = (): UseSolarDataReturn => {
 
   useEffect(() => {
     fetchData();
-
 
     const refreshInterval = setInterval(() => {
       fetchData();
@@ -124,7 +125,7 @@ export const useSolarData = (): UseSolarDataReturn => {
     return () => {
       clearInterval(refreshInterval);
     };
-  }, []);
+  }, [fetchData]);
 
   return {
     todayData,

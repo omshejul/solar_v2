@@ -110,9 +110,9 @@ export const PowerChart24H = ({
                 {dateLabel.toLowerCase()}
               </p>
               <p className="text-xs text-red-500 mt-3 max-w-md">
-                This could mean the date is outside the system's operational
-                period, before data recording began, or there was a system
-                outage.
+                This could mean the date is outside the system&apos;s
+                operational period, before data recording began, or there was a
+                system outage.
               </p>
             </div>
           </div>
@@ -207,14 +207,6 @@ export const PowerChart24H = ({
   // For 5-minute data, we want to show all data points but only hour labels on axis
   const displayData = chartData;
 
-  // Find indices where hours change (for custom ticks)
-  const hourTicks = displayData.reduce((acc: number[], point, index) => {
-    if (point.time.endsWith(":00") || index === 0) {
-      acc.push(index);
-    }
-    return acc;
-  }, []);
-
   return (
     <Card>
       <CardHeader className="px-3 sm:px-6 pt-3 sm:pt-6">
@@ -263,7 +255,7 @@ export const PowerChart24H = ({
                   angle={config.angle}
                   textAnchor={config.angle < 0 ? "end" : "middle"}
                   height={config.xAxisHeight}
-                  tickFormatter={(value, index) => {
+                  tickFormatter={(value) => {
                     // Only show hour labels (when minutes are :00)
                     if (value.endsWith(":00")) {
                       return value.substring(0, 2); // Show just the hour part (00, 01, 02, etc.)

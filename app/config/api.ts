@@ -1,6 +1,5 @@
 import axios from "axios";
 import { config } from "dotenv";
-import * as https from "https";
 
 // Initialize dotenv
 config();
@@ -8,11 +7,6 @@ config();
 const BEARER_TOKEN = process.env.TOKEN;
 const BASE_URL = "https://pvcheck.havells.com";
 const DEVICE_ID = "63295957";
-
-// Create a custom HTTPS agent that allows self-signed certificates
-const httpsAgent = new https.Agent({
-  rejectUnauthorized: false,
-});
 
 // Utility function for making authenticated API calls via our internal API route
 export const apiConfig = {
@@ -30,9 +24,11 @@ export const getPowerHistory = async (
       params: { year, month, day },
     });
     return response;
-  } catch (error: any) {
-    console.error("Error fetching power history:", error.message);
-    throw new Error(`Failed to fetch power history: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("Error fetching power history:", errorMessage);
+    throw new Error(`Failed to fetch power history: ${errorMessage}`);
   }
 };
 
@@ -42,9 +38,11 @@ export const getMonthlyStats = async (year: number, month: number) => {
       params: { year, month },
     });
     return response;
-  } catch (error: any) {
-    console.error("Error fetching monthly stats:", error.message);
-    throw new Error(`Failed to fetch monthly stats: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("Error fetching monthly stats:", errorMessage);
+    throw new Error(`Failed to fetch monthly stats: ${errorMessage}`);
   }
 };
 

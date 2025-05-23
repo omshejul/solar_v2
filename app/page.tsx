@@ -23,15 +23,6 @@ export default function Dashboard() {
     refetch,
   } = useSolarDataWithDate(selectedDate);
 
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -116,8 +107,8 @@ export default function Dashboard() {
                         <ul className="text-xs list-disc list-inside space-y-1 ml-2">
                           <li>Select a more recent date</li>
                           <li>
-                            Check if the date is within the system's operational
-                            period
+                            Check if the date is within the system&apos;s
+                            operational period
                           </li>
                           <li>Try refreshing the data</li>
                         </ul>

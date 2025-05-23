@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getPowerHistory, getMonthlyStats } from "@/app/config/api";
 import {
   PowerHistoryResponse,
   DailyProduction,
-  MonthlyStatsResponse,
   MonthlyStatistics,
+  MonthlyStatItem,
 } from "@/app/types/solar";
 
 interface UseSolarDataWithDateReturn {
@@ -34,7 +34,7 @@ export const useSolarDataWithDate = (
   const [dataError, setDataError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchSelectedDateData = async (date: Date) => {
+  const fetchSelectedDateData = useCallback(async (date: Date) => {
     try {
       const response = await getPowerHistory(
         date.getFullYear(),
@@ -76,9 +76,9 @@ export const useSolarDataWithDate = (
         );
       }
     }
-  };
+  }, []);
 
-  const fetchMonthlyData = async (date: Date) => {
+  const fetchMonthlyData = useCallback(async (date: Date) => {
     try {
       const response = await getMonthlyStats(
         date.getFullYear(),
@@ -99,13 +99,15 @@ export const useSolarDataWithDate = (
         monthlyStatsResponse.records &&
         Array.isArray(monthlyStatsResponse.records)
       ) {
-        allDailyData = monthlyStatsResponse.records.map((item: any) => ({
-          date: `${item.year}-${String(item.month).padStart(2, "0")}-${String(
-            item.day
-          ).padStart(2, "0")}`,
-          generation: item.generationValue || 0,
-          fullPowerHours: item.fullPowerHoursDay || 0,
-        }));
+        allDailyData = monthlyStatsResponse.records.map(
+          (item: MonthlyStatItem) => ({
+            date: `${item.year}-${String(item.month).padStart(2, "0")}-${String(
+              item.day
+            ).padStart(2, "0")}`,
+            generation: item.generationValue || 0,
+            fullPowerHours: item.fullPowerHoursDay || 0,
+          })
+        );
 
         // Sort by date
         allDailyData.sort(
@@ -123,38 +125,44 @@ export const useSolarDataWithDate = (
       console.error("Error fetching monthly data:", err);
       throw err;
     }
-  };
+  }, []);
 
-  const fetchData = async (date: Date) => {
-    setLoading(true);
-    setError(null);
-    setDataError(null);
+  const fetchData = useCallback(
+    async (date: Date) => {
+      setLoading(true);
+      setError(null);
+      setDataError(null);
 
-    try {
-      // Fetch both selected date's detailed data and monthly data
-      await Promise.all([fetchSelectedDateData(date), fetchMonthlyData(date)]);
-      setLastUpdated(new Date());
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "An unexpected error occurred while fetching solar data";
-      setError(
-        `Critical Error: ${errorMessage}. Please refresh the page or contact technical support if the problem persists.`
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        // Fetch both selected date's detailed data and monthly data
+        await Promise.all([
+          fetchSelectedDateData(date),
+          fetchMonthlyData(date),
+        ]);
+        setLastUpdated(new Date());
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred while fetching solar data";
+        setError(
+          `Critical Error: ${errorMessage}. Please refresh the page or contact technical support if the problem persists.`
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchSelectedDateData, fetchMonthlyData]
+  );
 
-  const refetch = () => {
+  const refetch = useCallback(() => {
     fetchData(selectedDate);
-  };
+  }, [fetchData, selectedDate]);
 
   // Fetch data when selected date changes
   useEffect(() => {
     fetchData(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate, fetchData]);
 
   // Auto-refresh only if viewing today's data
   useEffect(() => {
@@ -176,7 +184,7 @@ export const useSolarDataWithDate = (
         clearInterval(refreshInterval);
       };
     }
-  }, [selectedDate]);
+  }, [selectedDate, fetchData]);
 
   return {
     selectedDateData,

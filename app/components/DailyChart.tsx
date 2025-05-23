@@ -212,7 +212,7 @@ export const DailyChart = ({ data, loading }: DailyChartProps) => {
                         }
                         return `Date: ${value}`;
                       }}
-                      formatter={(value, name) => [
+                      formatter={(value) => [
                         `${Number(value).toFixed(2)} kWh`,
                         "Generation",
                       ]}

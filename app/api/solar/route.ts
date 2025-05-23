@@ -48,13 +48,20 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(response.data);
-  } catch (error: any) {
-    console.error("Error fetching power history:", error.message);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    const responseData =
+      error && typeof error === "object" && "response" in error
+        ? (error as { response?: { data: unknown } }).response?.data
+        : undefined;
+
+    console.error("Error fetching power history:", errorMessage);
     return NextResponse.json(
       {
         error: "Failed to fetch power history",
-        details: error.message,
-        response: error.response?.data,
+        details: errorMessage,
+        response: responseData,
       },
       { status: 500 }
     );
