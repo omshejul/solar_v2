@@ -269,11 +269,7 @@ export const PowerChart24H = ({
                   fontSize={config.fontSize}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) =>
-                    screenSize === "mobile"
-                      ? `${wattsToKilowatts(value).toFixed(0)}k`
-                      : `${wattsToKilowatts(value).toFixed(1)}kW`
-                  }
+                  tickFormatter={(value) => `${wattsToKilowatts(value).toFixed(1)}kW`}
                   tick={{ fill: "hsl(var(--muted-foreground))" }}
                   width={config.yAxisWidth}
                   domain={[0, "dataMax"]}
