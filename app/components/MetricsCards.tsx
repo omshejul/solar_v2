@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Sun, Calendar, Zap, Settings } from "lucide-react";
 import {
   PowerHistoryResponse,
   DailyProduction,
@@ -87,7 +87,7 @@ export const MetricsCards = ({
   const currentPower = todayData ? calculateCurrentPower(todayData.records) : 0;
   const peakPower = todayData ? calculatePeakPower(todayData.records) : 0;
   const systemActive = todayData ? isSystemActive(todayData.records) : false;
-  const todayGeneration = todayData?.statistics.generationValue || 0;
+  const todayGeneration = todayData?.statistics?.generationValue || 0;
 
   // Use monthly statistics for more accurate data
   const monthlyGeneration =
@@ -101,10 +101,10 @@ export const MetricsCards = ({
 
   const metrics = [
     {
-      title: "Production-Today",
+      title: "Production Today",
       value: todayData ? `${todayGeneration.toFixed(2)} kWh` : "N/A",
       subtitle: todayData
-        ? `${todayData.statistics.fullPowerHoursDay || 0} full power hours`
+        ? `${todayData.statistics?.fullPowerHoursDay || 0} full power hours`
         : "No data for selected date",
       status: todayData ? (systemActive ? "Active" : "Inactive") : "No Data",
       statusColor: todayData
@@ -113,9 +113,11 @@ export const MetricsCards = ({
           : "bg-zinc-500"
         : "bg-red-500",
       hasError: !todayData,
+      icon: Sun,
+      iconColor: "text-orange-500",
     },
     {
-      title: "Production-This Month",
+      title: "Production This Month",
       value:
         monthlyStats || weeklyData.length > 0
           ? `${monthlyGeneration.toFixed(2)} kWh`
@@ -136,6 +138,8 @@ export const MetricsCards = ({
         ? "bg-sky-500"
         : "bg-red-500",
       hasError: !monthlyStats && weeklyData.length === 0,
+      icon: Calendar,
+      iconColor: "text-blue-500",
     },
     {
       title: "Production Power",
@@ -156,6 +160,8 @@ export const MetricsCards = ({
           : "bg-amber-500"
         : "bg-red-500",
       hasError: !todayData,
+      icon: Zap,
+      iconColor: "text-yellow-500",
     },
     {
       title: "Installed Capacity",
@@ -164,6 +170,8 @@ export const MetricsCards = ({
       status: "Rated",
       statusColor: "bg-violet-500",
       hasError: false,
+      icon: Settings,
+      iconColor: "text-purple-500",
     },
   ];
 
@@ -179,11 +187,15 @@ export const MetricsCards = ({
           <CardHeader className="pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
             <div className="flex justify-between items-start gap-2">
               <CardTitle
-                className={`text-xs sm:text-sm font-medium leading-tight flex items-center gap-1 ${
+                className={`text-xs sm:text-sm font-medium leading-tight flex items-center gap-2 ${
                   metric.hasError ? "text-red-600" : "text-muted-foreground"
                 }`}
               >
-                {metric.hasError && <AlertCircle className="h-3 w-3" />}
+                {metric.hasError ? (
+                  <AlertCircle className="h-4 w-4 text-red-500" />
+                ) : (
+                  <metric.icon className={`h-4 w-4 ${metric.iconColor}`} />
+                )}
                 {metric.title}
               </CardTitle>
               <Badge

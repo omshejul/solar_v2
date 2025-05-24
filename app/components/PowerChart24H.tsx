@@ -10,7 +10,7 @@ import { Area, AreaChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { PowerHistoryResponse } from "@/app/types/solar";
 import { processChartData, wattsToKilowatts } from "@/app/utils/solar";
 import { useEffect, useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Clock, Zap } from "lucide-react";
 
 interface PowerChart24HProps {
   data: PowerHistoryResponse | null;
@@ -134,8 +134,10 @@ export const PowerChart24H = ({
             24H Power Generation - Limited Data
           </CardTitle>
           <div className="text-xs sm:text-sm text-yellow-600">
-            {dateLabel}: {data.statistics.generationValue.toFixed(2)} kWh •{" "}
-            {data.statistics.fullPowerHoursDay.toFixed(1)} full power hours
+            {dateLabel}:{" "}
+            {data.statistics?.generationValue?.toFixed(2) || "0.00"} kWh •{" "}
+            {data.statistics?.fullPowerHoursDay?.toFixed(1) || "0.0"} full power
+            hours
           </div>
         </CardHeader>
         <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
@@ -151,7 +153,7 @@ export const PowerChart24H = ({
               <div className="mt-4 p-3 bg-yellow-100 rounded-lg border border-yellow-300">
                 <p className="text-sm font-medium">Daily Total Production</p>
                 <p className="text-2xl font-bold text-yellow-800">
-                  {data.statistics.generationValue.toFixed(2)} kWh
+                  {data.statistics?.generationValue?.toFixed(2) || "0.00"} kWh
                 </p>
               </div>
               <p className="text-xs text-yellow-600 mt-3">
@@ -214,9 +216,9 @@ export const PowerChart24H = ({
           24H Power Generation
         </CardTitle>
         <div className="text-xs sm:text-sm text-muted-foreground">
-          {data.statistics.acceptDay ? (
+          {data.statistics?.acceptDay ? (
             <>
-              {data.statistics.acceptDay} • Peak:{" "}
+              {data.statistics?.acceptDay} • Peak:{" "}
               {wattsToKilowatts(maxPower).toFixed(2)} kW
             </>
           ) : (
@@ -269,7 +271,9 @@ export const PowerChart24H = ({
                   fontSize={config.fontSize}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) => `${wattsToKilowatts(value).toFixed(1)}kW`}
+                  tickFormatter={(value) =>
+                    `${wattsToKilowatts(value).toFixed(1)}kW`
+                  }
                   tick={{ fill: "hsl(var(--muted-foreground))" }}
                   width={config.yAxisWidth}
                   domain={[0, "dataMax"]}
@@ -277,10 +281,19 @@ export const PowerChart24H = ({
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      labelFormatter={(value) => `Time: ${value}`}
+                      labelFormatter={(value) => (
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-blue-500" />
+                          <span className="font-semibold">Time: {value}</span>
+                        </div>
+                      )}
                       formatter={(value) => [
-                        `${wattsToKilowatts(Number(value)).toFixed(2)} kW`,
-                        "Power",
+                        <div className="flex items-center gap-2" key="power">
+                          <Zap className="h-4 w-4 text-yellow-500" />
+                          <span className="font-bold">
+                            {wattsToKilowatts(Number(value)).toFixed(2)} kW
+                          </span>
+                        </div>,
                       ]}
                     />
                   }

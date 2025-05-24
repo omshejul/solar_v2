@@ -10,7 +10,7 @@ import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { DailyProduction } from "@/app/types/solar";
 import { calculateTotalProduction } from "@/app/utils/solar";
 import { useEffect, useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Calendar, Zap } from "lucide-react";
 
 interface DailyChartProps {
   data: DailyProduction[];
@@ -208,13 +208,28 @@ export const DailyChart = ({ data, loading }: DailyChartProps) => {
                     <ChartTooltipContent
                       labelFormatter={(value, payload) => {
                         if (payload && payload[0] && payload[0].payload) {
-                          return payload[0].payload.fullDate;
+                          const data = payload[0].payload;
+                          return (
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-blue-500" />
+                              <span className="font-semibold">
+                                {data.fullDate}
+                              </span>
+                            </div>
+                          );
                         }
                         return `Date: ${value}`;
                       }}
                       formatter={(value) => [
-                        `${Number(value).toFixed(2)} kWh`,
-                        "Generation",
+                        <div
+                          className="flex  items-center gap-2"
+                          key="generation"
+                        >
+                          <Zap className="h-4 w-4 text-yellow-500" />
+                          <span className="font-bold">
+                            {Number(value).toFixed(2)} kWh
+                          </span>
+                        </div>
                       ]}
                     />
                   }

@@ -8,6 +8,7 @@ import { MetricsCards } from "@/app/components/MetricsCards";
 import { PowerChart24H } from "@/app/components/PowerChart24H";
 import { DailyChart } from "@/app/components/DailyChart";
 import { DatePicker } from "@/app/components/DatePicker";
+import { ThemeToggle } from "@/app/components/theme-toggle";
 
 export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -37,6 +38,9 @@ export default function Dashboard() {
                 <p className="text-sm sm:text-base text-muted-foreground">
                   Real-time solar power generation monitoring
                 </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
               </div>
             </div>
 
