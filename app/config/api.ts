@@ -1,10 +1,5 @@
 import axios from "axios";
-import { config } from "dotenv";
 
-// Initialize dotenv
-config();
-
-const BEARER_TOKEN = process.env.TOKEN;
 const BASE_URL = "https://pvcheck.havells.com";
 const DEVICE_ID = "63295957";
 
@@ -46,4 +41,4 @@ export const getMonthlyStats = async (year: number, month: number) => {
   }
 };
 
-export { BEARER_TOKEN, BASE_URL, DEVICE_ID };
+export { BASE_URL, DEVICE_ID };

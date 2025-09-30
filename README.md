@@ -24,9 +24,14 @@ npm install
 Create a `.env.local` file in the root directory:
 
 ```bash
-# Add your Havells PV Check API token
-TOKEN=your_bearer_token_here
+# Add your database API token for authentication
+DB_TOKEN=your_database_token_here
+
+# Add your authorization token for local API access (updateKey endpoint)
+AUTH=your_local_auth_token_here
 ```
+
+The application will automatically fetch the Havells PV Check API token from your database API at runtime.
 
 ### 3. API Configuration
 
@@ -104,6 +109,19 @@ const response = await getPowerHistory(2025, 1, 23);
 // - statistics: Daily totals and metrics
 // - records: 5-minute interval power data
 ```
+
+### Update Key API
+
+You can update the solar API token stored in the database using the `/api/updateKey` endpoint:
+
+```bash
+curl -X POST http://localhost:3000/api/updateKey \
+  -H "Authorization: Bearer YOUR_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"key": "new-solar-api-token"}'
+```
+
+**Note**: Requires `AUTH` environment variable to be set for authorization.
 
 ## 📈 Data Processing
 

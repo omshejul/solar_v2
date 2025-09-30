@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as https from "https";
+import { getBearerToken } from "../../../utils/token";
 
-const BEARER_TOKEN = process.env.TOKEN;
 const BASE_URL = "https://pvcheck.havells.com";
 const DEVICE_ID = "63295957";
 
@@ -26,9 +26,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (!BEARER_TOKEN) {
+    let bearerToken: string;
+    try {
+      bearerToken = await getBearerToken();
+    } catch {
       return NextResponse.json(
-        { error: "TOKEN environment variable is not set" },
+        { error: "Failed to retrieve authentication token" },
         { status: 500 }
       );
     }
@@ -38,7 +41,7 @@ export async function GET(request: NextRequest) {
       {
         params: { year, month },
         headers: {
-          Authorization: `Bearer ${BEARER_TOKEN}`,
+          Authorization: `Bearer ${bearerToken}`,
           Accept: "application/json",
         },
         httpsAgent,
