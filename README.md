@@ -123,6 +123,13 @@ curl -X POST http://localhost:3000/api/updateKey \
 
 **Note**: Requires `AUTH` environment variable to be set for authorization.
 
+### Health API
+
+The app also exposes `/api/health` for dependency health checks.
+
+- Returns `200` with `status: "ok"` when the internal solar dependency is reachable.
+- Returns `503` with `status: "error"` when token lookup or the Havells solar API call fails.
+
 ## 📈 Data Processing
 
 - **Time Conversion**: Unix timestamps to readable time
